@@ -7,6 +7,7 @@
 // @match        https://*/server/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=pterodactyl.io
 // @grant        none
+// @license      MIT
 // ==/UserScript==
 
 (async function () {
