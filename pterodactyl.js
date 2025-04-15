@@ -95,7 +95,7 @@
         ws.send(
           JSON.stringify({
             event: "set state",
-            args: ["kill"],
+            args: ["stop"],
           })
         );
         return;
@@ -104,7 +104,7 @@
         ws.send(
           JSON.stringify({
             event: "set state",
-            args: ["stop"],
+            args: ["kill"],
           })
         );
         return;
