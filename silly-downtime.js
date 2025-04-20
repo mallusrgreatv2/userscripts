@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SillyDev Downtime Checker
 // @namespace    https://discopika.tk
-// @version      1.0.3
+// @version      1.0.0
 // @description  Prompt when the node is rate limited or down (with proper mutation observer)
 // @author       mallusrgreat
 // @match        https://panel.sillydev.co.uk/server/*
