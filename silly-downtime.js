@@ -2,7 +2,7 @@
 // @name         SillyDev Downtime Checker
 // @namespace    https://discopika.tk
 // @version      1.0.0
-// @description  Prompt when the node is rate limited or down (with proper mutation observer)
+// @description  Prompt when the node is rate limited or down
 // @author       mallusrgreat
 // @match        https://panel.sillydev.co.uk/server/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=panel.sillydev.co.uk
@@ -13,11 +13,12 @@
 (function () {
   "use strict";
 
-  let lastURL = location.href;
-  let timeout = null;
-
   async function checkStatus() {
-    const match = lastURL.match(/^https?:\/\/[a-z.]+\/server\/([a-z0-9]{8})/);
+    console.log("e");
+    const match = location.href.match(
+      /^https?:\/\/panel\.sillydev\.co\.uk\/server\/([a-z0-9]{8})/
+    );
+    console.log(match);
     if (!match) return;
 
     const serverId = match[1];
@@ -40,7 +41,7 @@
       let message = "";
 
       if (nodeData.rateLimitTime) {
-        message += `The ${node} node is currently rate-limited on Discord! Expires ${formatTime(
+        message += `The ${node} node is currently rate-limited on Discord! Expires ${formatRateLimitTime(
           nodeData.rateLimitTime
         )} (${nodeData.rateLimitTime.toLocaleString()} seconds).`;
       }
@@ -57,25 +58,30 @@
     }
   }
 
-  function formatTime(seconds) {
-    const rtf = new Intl.RelativeTimeFormat("en-US", { numeric: "auto" });
-    if (seconds >= 3600) return rtf.format(Math.floor(seconds / 3600), "hour");
-    if (seconds >= 60) return rtf.format(Math.floor(seconds / 60), "minute");
-    return rtf.format(seconds, "second");
-  }
-
-  const observer = new MutationObserver(() => {
-    if (location.href !== lastURL) {
-      lastURL = location.href;
-
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        checkStatus();
-      }, 500);
-    }
-  });
-
-  observer.observe(document.body, { childList: true, subtree: true });
-
   checkStatus();
+  let lastUrl = location.href;
+  new MutationObserver(() => {
+    if (location.href !== lastUrl) {
+      lastUrl = location.href;
+      checkStatus();
+    }
+  }).observe(document, { subtree: true, childList: true });
 })();
+function formatRateLimitTime(seconds) {
+  if (seconds >= 3600) {
+    return new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(
+      Math.floor(seconds / 3600),
+      "hour"
+    );
+  } else if (seconds >= 60) {
+    return new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(
+      Math.floor(seconds / 60),
+      "minute"
+    );
+  } else {
+    return new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(
+      seconds,
+      "second"
+    );
+  }
+}
